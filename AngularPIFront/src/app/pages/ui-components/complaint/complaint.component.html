@@ -4,74 +4,125 @@
   </mat-card-header>
   <mat-card-content class="b-t-1">
     <div class="table-responsive">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Description</th>
-            <th>Type Complaint</th>
-            <th>Date Complaint</th>
-            <th>Name</th>
-            <th>Last name</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let complaint of complaints">
-            <td>{{ complaint.description }}</td>
-            <td>{{ complaint.typeRec }}</td>
-            <td>{{ complaint.dateComplaint }}</td>
-            <td>{{ complaint.name }}</td>
-            <td>{{ complaint.lastname }}</td>
-            <td>{{ complaint.email }}</td>
-            <td>
-             
-                <span [ngClass]="{
-                  'btn btn-warning': complaint.status === 'IN_PROGRESS',
-                  'btn btn-danger': complaint.status === 'DROPPED',
-                  'btn btn-success': complaint.status === 'TREATED',
-                }">
-                  {{ complaint.status === 'IN_PROGRESS' ? 'En cours' : 
-                     complaint.status === 'TREATED' ? 'Traité' : 
-                     complaint.status === 'DROPPED' ? 'Abandonné' : 'Autre' }}
-                </span>
-            
-              
-            </td>
-            
-            <td>
-              <button class="btn btn-danger" (click)="deleteComplaint(complaint.idComp)">Delete</button>
-            </td>
-            <td>
-              <button class="btn btn-success" (click)="openADDDialog(complaint.idComp)">answer</button>
-              <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                  ACTION
-                </button>
+    
 
-                <!-- Modal -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        ...
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                      </div>
-                    </div>
+      <mat-form-field class="w-100">
+        <input matInput (keyup)="applyFilter()" [(ngModel)]="filterShearch"  placeholder="Filter">
+      </mat-form-field>
+      
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 table-responsive">
+        <!-- Position Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef> Description </th>
+          <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+        </ng-container>
+      
+        <!-- Name Column -->
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef> Type </th>
+          <td mat-cell *matCellDef="let element"> {{element.typeRec}} </td>
+        </ng-container>
+      
+    
+  
+  <ng-container matColumnDef="dateComplaint">
+    <th mat-header-cell *matHeaderCellDef> Complaint  Date</th>
+    <td mat-cell *matCellDef="let element"> {{element.dateComplaint}} </td>
+  </ng-container>
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Name </th>
+    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+  </ng-container>
+  <ng-container matColumnDef="lastname">
+    <th mat-header-cell *matHeaderCellDef> Lastname </th>
+    <td mat-cell *matCellDef="let element"> {{element.lastname}} </td>
+  </ng-container>
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef> Email </th>
+    <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+  </ng-container>
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef> Status </th>
+    <td mat-cell *matCellDef="let element">
+      <span class="btn" [ngClass]="{
+        'btn-warning': element.status == 'IN_PROGRESS',
+        'btn-danger': element.status == 'DROPPED',
+        'btn-success': element.status == 'TREATED',
+      }">
+        {{ element.status === 'IN_PROGRESS' ? 'En cours' : 
+           element.status === 'TREATED' ? 'Traité' : 
+           element.status === 'DROPPED' ? 'Abandonné' : 'Autre' }}
+      </span>
+       </td>
+  </ng-container>
+  <ng-container matColumnDef="idComp">
+    <th mat-header-cell *matHeaderCellDef> Action </th>
+    <td mat-cell *matCellDef="let element"> 
+      
+      <button class="btn btn-danger" (click)="deleteComplaint(element.idComp)">Delete</button>
+              
+      <button class="btn btn-success" (click)="openADDDialog(element.idComp)">answer</button>
+      <!-- Button trigger modal -->
+        <button (click)=" initForm(element)" type="button" class="btn btn-primary" data-bs-toggle="modal"  [attr.data-bs-target]="'#Modal'+element.idComp">
+          ACTION
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" [id]="'Modal'+element.idComp" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form [formGroup]="complaintForm" *ngIf="complaintForm" (ngSubmit)="saveComplaint()">
+                  <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" class="form-control" formControlName="description"></textarea>
                   </div>
-                </div>
-            </td>
-          </tr>
-        </tbody>
+                
+                  <div class="form-group">
+                    <label for="dateComplaint">Date</label>
+                    <input type="date" id="dateComplaint" class="form-control" formControlName="dateComplaint">
+                  </div>
+                  <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" class="form-control" formControlName="name">
+                  </div>
+                  <div class="form-group">
+                    <label for="lastname">Lastname</label>
+                    <input type="text" id="lastname" class="form-control" formControlName="lastname">
+                  </div>
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" formControlName="email">
+                  </div>
+                  <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" class="form-control" formControlName="status">
+                      <option value="IN_PROGRESS" selected>IN PROGRESS</option>
+                      <option value="DROPPED">DROPPED</option>
+                      <option value="TREATED">TREATED</option>
+                      <!-- Add other status options if needed -->
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                </form>
+                
+                
+              </div>
+        
+            </div>
+          </div>
+        </div> </td>
+  </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+
     </div>
   </mat-card-content>
 </mat-card>

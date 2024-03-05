@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Task } from '../core/Task';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { constantes } from '../constants';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { Injectable } from '@angular/core';
 
 export class TaskService {
 
-  private baseUrl = 'http://localhost:8081/api/tasks';
+  private baseUrl = constantes.base_url+'api/tasks';
 
   constructor(private http: HttpClient) { }
 

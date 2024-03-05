@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { Complaint } from 'src/app/core/Complaint';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Complaint, TypeRec } from 'src/app/core/Complaint';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ComplaintService } from 'src/app/services/complaint.service';
 import { ResponseComponent } from './response/response.component';
+import { MatTableDataSource } from '@angular/material/table';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
 
 
 
@@ -14,12 +17,16 @@ import { ResponseComponent } from './response/response.component';
   styleUrls: ['./complaint.component.scss']
 })
 export class ComplaintComponent implements OnInit{
-  complaints: Complaint[];
+  complaints: Complaint[]=[];
+filterShearch=''
+@ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
-  constructor(private complaintService: ComplaintService, private router: Router, public dialog: MatDialog) { }
+  constructor(private complaintService: ComplaintService, private router: Router, public dialog: MatDialog,private fb: FormBuilder) { }
 
   ngOnInit() {
     this.fetchComplaints();
+    this.dataSource.paginator = this.paginator;
+
     };
 
     openADDDialog(idComp: number): void {
@@ -32,6 +39,23 @@ export class ComplaintComponent implements OnInit{
         this.fetchComplaints();
       });
     }
+    complaintForm:any
+
+    initForm(comp:Complaint): void {
+      console.log(comp);
+      
+      this.complaintForm = this.fb.group({
+        idComp: comp.idComp,
+        typeRec: comp.typeRec,
+        description: [comp.description, Validators.required],
+        dateComplaint: [new Date(), Validators.required],
+        name: [comp.name, Validators.required],
+        lastname: [comp.lastname, Validators.required],
+        email: [comp.email, [Validators.required, Validators.email]],
+        status: [comp.status, Validators.required]
+      });
+    }
+  
 
  getComplaints() {
     this.complaintService.getAllComplaints().subscribe((src: Complaint[]) => {
@@ -39,7 +63,15 @@ export class ComplaintComponent implements OnInit{
       this.complaints = src;
     });
   }  
+  displayedColumns: string[] = [
+    'description',	'type','dateComplaint' ,	'name',	'lastname',	'email',	'status',	'idComp'
+  ];
+  dataSource = null
 
+  applyFilter() {
+    
+    this.dataSource.filter = this.filterShearch.trim().toLowerCase();
+  }
   deleteComplaint(idComp) {
     if (confirm('Voulez-vous supprimer cette complaint ?')) {
       this.complaintService.deleteComplaint(idComp).subscribe(() => {
@@ -48,16 +80,43 @@ export class ComplaintComponent implements OnInit{
       });
     }
   }
+
+  saveComplaint(){
+    this.complaintService.updateComplaint(this.complaintForm.value.idComp,this.complaintForm.value).subscribe(
+      res => {
+        console.log(res);
+        location.reload()
+alert('updated sucsessfully')
+      },
+      error => {
+        console.error('Error updating Complaints:', error);
+      }
+    );
+  }
   fetchComplaints(): void {
     this.complaintService.getAllComplaints().subscribe(
       complaints => {
+        console.log(complaints[0]);
+        
         this.complaints = complaints;
+        this.dataSource = new MatTableDataSource(complaints);
+        this.dataSource.paginator = this.paginator;
+
       },
       error => {
         console.error('Error fetching Complaints:', error);
       }
     );
   }
+
+
+ 
+
+
+
+
+
+  
   }
 
 

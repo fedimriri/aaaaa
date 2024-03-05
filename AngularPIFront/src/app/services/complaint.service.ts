@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Complaint } from '../core/Complaint';
+import { constantes } from '../constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ComplaintService {
 
-  private baseUrl = 'http://localhost:8081/api/complaint';
+  private baseUrl = constantes.base_url+'api/complaint';
 
   constructor(private http: HttpClient) { }
 
