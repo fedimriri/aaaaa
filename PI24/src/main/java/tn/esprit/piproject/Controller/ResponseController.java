@@ -32,7 +32,7 @@ import tn.esprit.piproject.Services.IProjectService;
 @AllArgsConstructor
 @NoArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://192.168.1.121:4200")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/response")
 public class ResponseController {
     @Autowired

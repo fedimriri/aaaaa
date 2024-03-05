@@ -24,7 +24,7 @@ public class Complaint {
     private String lastname;
     private String email;
 
-    private ComplaintStatus status;
+    private ComplaintStatus status = getStatus();
 
     private SatisfactionLevel note;
 

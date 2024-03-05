@@ -16,7 +16,7 @@ import tn.esprit.piproject.helpers.JavaMailSenderHelper;
 
 @RestController
 @RequestMapping("/test")
-@CrossOrigin(origins = "http://192.168.1.121:4200")
+@CrossOrigin(origins = "http://localhost:4200")
 public class TestController {
 
     private final JavaMailSenderHelper mailSenderHelper;

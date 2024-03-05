@@ -25,7 +25,7 @@ import tn.esprit.piproject.Services.IProjectService;
 
 
 @RestController
-@CrossOrigin(origins = "http://192.168.1.121:4200")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/complaint")
 public class ComplaintController {
 
