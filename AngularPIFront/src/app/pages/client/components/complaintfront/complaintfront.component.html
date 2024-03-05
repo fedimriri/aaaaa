@@ -1,0 +1,48 @@
+<div fxLayout="column" fxLayoutAlign="center center" style="height: 100vh;">
+    <table>
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <h1 style="color: #6c43a1;">Create a complaint</h1>
+            </td>
+        </tr>
+        <tr>
+            <td><mat-label>Description:</mat-label></td>
+            <td>
+                <input matInput name="descriptionComplaint" [(ngModel)]="complaint.description" class="form-control" placeholder="Description" required>
+            </td>
+        </tr>
+        <tr>
+            <td><mat-label>Type of complaint:</mat-label></td>
+            <td>
+                    <mat-label>Type de réclamation</mat-label>
+                    <mat-select name="typeRec" [(ngModel)]="complaint.typeRec" class="form-select" required>
+                        <mat-option *ngFor="let type of complaintTypes" [value]="type">{{ type }}</mat-option>
+                    </mat-select>
+            </td>
+        </tr>
+        <tr>
+            <td><mat-label>Name:</mat-label></td>
+            <td>
+                <input matInput name="name" [(ngModel)]="complaint.name" class="form-control" placeholder="Name" required>
+            </td>
+        </tr>
+        <tr>
+            <td><mat-label>Lastname:</mat-label></td>
+            <td>
+                <input matInput name="lastname" [(ngModel)]="complaint.lastname" class="form-control" placeholder="Lastname" required>
+            </td>
+        </tr>
+        <tr>
+            <td><mat-label>Email adress :</mat-label></td>
+            <td>
+                <input matInput name="email adress" [(ngModel)]="complaint.email" class="form-control" placeholder="Email adress" required>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <button mat-raised-button color="primary" (click)="addComplaint()" class="btn btn-primary"><b>Create</b></button>
+                <button mat-button class="btn btn-secondary"><b>Cancel</b></button>
+            </td>
+        </tr>
+    </table>
+</div>
